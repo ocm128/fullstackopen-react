@@ -1,0 +1,39 @@
+
+.info{
+  color: #008CBA;
+  background: lightgrey;
+  font-size: 20px;
+  border-style: solid;
+  border-radius: 5px;
+  padding: 10px;
+  margin-bottom: 10px;
+
+}
+
+.error {
+  color: red;
+  background: lightgrey;
+  font-size: 20px;
+  border-style: solid;
+  border-radius: 5px;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+
+.btn-delete, .btn-add {
+  background: #008CBA;
+  color: white; 
+  border-color: grey;
+  border-radius: 4px;
+}
+
+.btn-delete:hover {
+  background-color: rgb(187, 57, 57);
+  color: white;
+}
+
+.btn-add:hover {
+  background-color: white;
+  color: #008CBA;
+
+}
