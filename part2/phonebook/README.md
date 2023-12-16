@@ -1,3 +1,20 @@
+
+
+To run the app locally, the baseUrl variable in /services/persons.js must be changed.
+
+In addition, two terminals must be run:
+
+#1  `npm run server`, which is will raise the server specified in scripts package.json
+
+#2  `npm star`, to run the app itself
+
+
+
+
++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).

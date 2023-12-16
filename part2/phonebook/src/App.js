@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import axios from 'axios'
+//import axios from 'axios'
 import personService from './services/persons'
 import './index.css';
 
@@ -79,7 +79,6 @@ const App = () => {
     );
     if(repeated) {
       if(window.confirm(`${newName} is already added to phonebook. Replace old phone number?`)) {
-        console.log("dentro de repeated if")
         const personExist = persons.find(person => person.name.toLowerCase() === newName.toLocaleLowerCase());
         const updatedPerson = {...personExist, number: newNumber}
       
@@ -120,22 +119,21 @@ const App = () => {
   };
 
   const removePerson = (id) => {
-    axios.get(`http://localhost:3001/persons/${id}`).then((response) => {
-      const confirm = window.confirm(`Delete ${response.data.name}?`);
-      if (confirm) {
-        axios
-          .delete(`http://localhost:3001/persons/${id}`)
-          .then((response) => personService.getAll())
-          .then((response) => setPersons(response.data));
-        setNotificationMsg(`${response.data.name} has been removed`)
-        setNotificationType('error');
+    const personToDelete = persons.find(person => person.id === id)
+    const confirm = window.confirm(`Delete ${personToDelete.name}?`)
+    if (confirm) {
+      personService
+        .deletePerson(personToDelete.id)
+        .then((response) => personService.getAll())
+        .then((response) => setPersons(response.data));
+      setNotificationMsg(`${personToDelete.name} has been removed`)
+      setNotificationType('error');
 
-        setTimeout(() => {
-          setNotificationMsg(null)
-        }, 2000);
-      }
-    });
-  }; 
+      setTimeout(() => {
+        setNotificationMsg(null)
+      }, 2000);
+    }
+  }
 
   const handleAddPerson = (event) => {
     setNewName(event.target.value)

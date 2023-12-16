@@ -1,6 +1,6 @@
 import axios from 'axios'
 // local
-// const baseUrl = 'http://localhost:3001/persons' 
+//const baseUrl = 'http://localhost:3001/persons' 
 const baseUrl = '/api/persons' // to deploy in part3
 
 const getAll = () => {
