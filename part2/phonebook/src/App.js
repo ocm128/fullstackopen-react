@@ -26,7 +26,8 @@ const PersonForm = ({onSubmit, newName, handleAddPerson, newNumber, handleAddNum
         name: <input value={newName} onChange={handleAddPerson}/>
       </div>
       <div>
-        number: <input value={newNumber} onChange={handleAddNumber} />
+        number: <input value={newNumber} onChange={handleAddNumber}
+         placeholder='12-3456789 or 123-456789' />
       </div>
       <div>
         <button className='btn-add' type="submit">Add</button>
@@ -93,8 +94,16 @@ const App = () => {
             setNewNumber('')
             setTimeout(() => {
               setNotificationMsg(null)
-            }, 5000)
+            }, 3000)
           })
+          .catch((error) => {
+            console.log(`Error updating ${newName}`, error);
+            setNotificationMsg(`${error.response.data.error}`);
+            setNotificationType("error");
+            setTimeout(() => {
+              setNotificationMsg(null);
+            }, 5000);
+          });
       } 
     }else {
       if(newName !== ''){
@@ -113,6 +122,9 @@ const App = () => {
             console.log('Error adding a new person', error);
             setNotificationMsg(`${error.response.data.error}`);
             setNotificationType("error");
+            setTimeout(() => {
+              setNotificationMsg(null);
+            }, 5000);
           });
       }
     }
@@ -131,7 +143,7 @@ const App = () => {
 
       setTimeout(() => {
         setNotificationMsg(null)
-      }, 2000);
+      }, 3000);
     }
   }
 
@@ -162,7 +174,9 @@ const App = () => {
       />
       <h2>Numbers</h2>
       <Persons persons={persons} searchName={searchName} removePerson={removePerson}/>
+      <p></p>
     </div>
+  
   )
 }
 
