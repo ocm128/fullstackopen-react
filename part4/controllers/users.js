@@ -18,12 +18,12 @@ usersRouter.post('/', async (request, response) => {
     passwordHash,
   })
 
-  /*  if(user.username){
-    return response.status(400).json({ error: 'username already taken. Username must be unique' })
-  } */
-  const savedUser = await user.save()
-
-  response.status(201).json(savedUser)
+  try {
+    const savedUser = await user.save()
+    response.status(201).json(savedUser)
+  } catch (error) {
+    response.status(400).json({ error: error })
+  }
 })
 
 usersRouter.get('/', async (request, response) => {

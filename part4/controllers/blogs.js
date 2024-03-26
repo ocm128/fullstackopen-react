@@ -1,7 +1,5 @@
 const blogsRouter = require('express').Router()
 const Blog = require('../models/blog')
-const User = require('../models/user')
-const jwt = require('jsonwebtoken')
 
 /* blogsRouter.get('/', (request, response) => {
   Blog
@@ -11,7 +9,7 @@ const jwt = require('jsonwebtoken')
     })
 }) */
 
-
+// Exercise 4.19
 /* const getTokenFrom = request => {
   const authorization = request.get('authorization')
   if (authorization && authorization.startsWith('Bearer ')) {
@@ -36,87 +34,62 @@ blogsRouter.get('/', async (request, response) => {
     })
 }) */
 
-/* blogsRouter.post('/', async (request, response) => {
-  const { title, author, likes } = request.body
-  const token = request.token
-  console.log(token, ' token')
-  const decodedToken = jwt.verify(token, process.env.SECRET)
+blogsRouter.post('/', async (request, response) => {
+  const { title, author, likes, url } = request.body
+  const user = request.user
 
-  if (!decodedToken.id) {
-    return response.status(401).json({ error: 'token invalid' })
+  if(!user){
+    return response.status(401).json({ error: 'token missing ooor invalid' })
   }
-  if (!request.body.url) {
+  if (!url) {
     return response.status(400).json({ error: 'url not found' })
   } else if (!title) {
-    return response.status(400).json({ error: 'Title not found' })
+    return response.status(400).json({ error: 'title not found' })
   } else {
-    const user = await User.findById(decodedToken.id)
 
     const blog = {
       'title': title,
       'author': author,
+      'url': url,
       'likes': likes,
       'user': user.id
     }
 
     const newBlog = new Blog(blog)
-
     const savedBlog = await newBlog.save()
     user.blogs = user.blogs.concat(savedBlog._id)
     await user.save()
 
     response.json(savedBlog.toJSON())
   }
-}) */
-
-blogsRouter.post('/', async (request, response) => {
-
-  // response.status(400)
-  if (request.body.title === undefined) {
-    response.status(400).json('title not found')
-  }
-  else if (request.body.url === undefined) {
-    response.status(400).json('url not found')
-  }
-  else if (request.token === undefined) {
-    console.log(request.token, ' token 1')
-    response.status(401).json('token missing or invalid 1')
-  }
-  else {
-    const body = request.body
-    const token = request.token
-    console.log(token, ' token')
-    const decodedToken = jwt.verify(token, process.env.SECRET)
-    if (!token || !decodedToken.id) {
-      return response.status(401).json({ error: 'token missing or invalid 2' })
-    }
-    const user = await User.findById(decodedToken.id)
-
-    // const user = await User.findById(body.userId)
-
-    const newBlog = {
-      'title': body.title,
-      'author': body.author,
-      'likes': body.likes,
-      'user': user.id
-    }
-    const blog = new Blog(newBlog)
-
-    const savedBlog = await blog.save()
-    user.blogs = user.blogs.concat(savedBlog._id)
-    await user.save()
-
-
-    response.json(savedBlog.toJSON())
-  }
 })
 
 // Exercise 4.13 (Blog list expansion)
-blogsRouter.delete('/:id', async(request, response, next) => {
+/* blogsRouter.delete('/:id', async(request, response, next) => {
   const id = request.params.id
   try {
     await Blog.findByIdAndRemove(id)
     response.status(204).end()
+  } catch (error) {
+    next(error)
+  }
+}) */
+
+// Exercise 4.21
+blogsRouter.delete('/:id', async(request, response, next) => {
+  const user = request.user
+  if(!user){
+    return response.status(401).json({ error: 'token or user invalid' })
+  }
+  try {
+    const blog = await Blog.findById(request.params.id)
+    if(blog.user.toString() === request.user.id){
+
+      await Blog.findByIdAndRemove(request.params.id)
+      response.status(204).end()
+    } else {
+      response.status(401).json({ error: 'Unauthorized to delete this blog' })
+    }
   } catch (error) {
     next(error)
   }
@@ -128,6 +101,9 @@ blogsRouter.put('/:id', async(request, response, next) => {
   const body = request.body
 
   const blog = {
+    //title: body.title,
+    //author: body.author,
+    //url: body.url
     likes: body.likes
   }
   try {
